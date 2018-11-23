@@ -500,8 +500,6 @@ void tlb_invalidate(pde_t *pgdir, void *va)
 	invlpg(va);
 }
 
-<<<<<<< HEAD
-=======
 static uintptr_t user_mem_check_addr;
 
 //
