@@ -546,7 +546,6 @@ user_mem_assert(struct Env *env, const void *va, size_t len, int perm)
 }
 
 
->>>>>>> a9d7717cc4b7751b1ce8dca4e5aa2722fa617f6b
 // --------------------------------------------------------------
 // Checking functions.
 // --------------------------------------------------------------
@@ -714,14 +713,11 @@ check_kern_pgdir(void)
 	for (i = 0; i < n; i += PGSIZE)
 		assert(check_va2pa(pgdir, UPAGES + i) == PADDR(pages) + i);
 
-<<<<<<< HEAD
-=======
 	// check envs array (new test for lab 3)
 	n = ROUNDUP(NENV*sizeof(struct Env), PGSIZE);
 	for (i = 0; i < n; i += PGSIZE)
 		assert(check_va2pa(pgdir, UENVS + i) == PADDR(envs) + i);
 
->>>>>>> a9d7717cc4b7751b1ce8dca4e5aa2722fa617f6b
 	// check phys mem
 	for (i = 0; i < npages * PGSIZE; i += PGSIZE)
 		assert(check_va2pa(pgdir, KERNBASE + i) == i);
