@@ -282,18 +282,6 @@ void page_init(void)
 	size_t i;
 	page_free_list = NULL;
 
-	/*pages[0].pp_ref++;
-	for (i = 1; i < npages; i++)
-	{
-		if (((i << PGSHIFT) >= IOPHYSMEM) && (EXTPHYSMEM >= (i << PGSHIFT)))
-			continue;
-		else
-		{
-			pages[i].pp_ref = 0;
-			pages[i].pp_link = page_free_list;
-			page_free_list = &pages[i];
-		}
-	}*/
 	int num_alloc = ((uint32_t)boot_alloc(0) - KERNBASE) / PGSIZE;
 	int num_iohole = 96;
 
@@ -329,14 +317,6 @@ void page_init(void)
 struct PageInfo *page_alloc(int alloc_flags)
 {
 	// Fill this function in
-
-	/*struct PageInfo *pp = page_free_list;
-	if (!pp)
-		return NULL;
-	if (alloc_flags & ALLOC_ZERO)
-		memset(page2kva(pp), 0, PGSIZE);
-	page_free_list = pp->pp_link;
-	return 0;*/
 	if (!page_free_list)
 		return NULL;
 	struct PageInfo *pp = page_free_list;
@@ -358,12 +338,6 @@ void page_free(struct PageInfo *pp)
 	// Fill this function in
 	// Hint: You may want to panic if pp->pp_ref is nonzero or
 	// pp->pp_link is not NULL.
-	/*if (pp->pp_ref > 0 || pp->pp_link != NULL)
-	{
-		panic("page_free: pp->pp_ref is nonzero or pp->pp_link is not NULL");
-	}
-	pp->pp_link = page_free_list;
-	page_free_list = pp;*/
 	if (pp->pp_ref != 0)
 		panic("pp->pp_ref is nonzero\n");
 	if (pp->pp_link)
@@ -408,23 +382,6 @@ void page_decref(struct PageInfo *pp)
 pte_t *pgdir_walk(pde_t *pgdir, const void *va, int create)
 {
 	// Fill this function in
-	/*pde_t *pde;
-	pte_t *pte;
-	pde = &pgdir[PDX(va)];
-	if ((*pde & PTE_P) == 0)
-	{
-		struct PageInfo *pp;
-		if (create == false)
-			return NULL;
-		pp = page_alloc(ALLOC_ZERO);
-		if (pp == NULL)
-			return NULL;
-		pp->pp_ref++;
-		*pde = page2pa(pp) | PTE_P | PTE_W | PTE_U;
-	}
-
-	pte = KADDR(PTE_ADDR(*pde));
-	return &pte[PTX(va)];*/
 	pde_t pde = pgdir[PDX(va)];
 	pte_t *result;
 	if (pde & PTE_P)
@@ -503,15 +460,6 @@ static void boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t 
 int page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 {
 	// Fill this function in
-	/*pte_t *pte = pgdir_walk(pgdir, va, true);
-	if (!pte)
-		return -E_NO_MEM;
-	pp->pp_ref++;
-	if (*pte & PTE_P)
-		page_remove(pgdir, va);
-	*pte = page2pa(pp) | perm | PTE_P;
-
-	return 0;*/
 	pte_t *ptep = pgdir_walk(pgdir, va, 1);
 	if (ptep == NULL)
 		return -E_NO_MEM;
@@ -540,12 +488,6 @@ struct PageInfo *
 page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 {
 	// Fill this function in
-	/*pte_t *pte = pgdir_walk(pgdir, va, 0);
-	if (!pte)
-		return NULL;
-	if (pte_store)
-		*pte_store = pte;
-	return pa2page(*pte);*/
 	pte_t *ptep = pgdir_walk(pgdir, va, 0);
 	if (ptep && ((*ptep) & PTE_P))
 	{
