@@ -233,7 +233,8 @@ trap_dispatch(struct Trapframe *tf)
 	// Handle spurious interrupts
 	// The hardware sometimes raises these because of noise on the
 	// IRQ line or other reasons. We don't care.
-	if (tf->tf_trapno == IRQ_OFFSET + IRQ_SPURIOUS) {
+	if (tf->tf_trapno == IRQ_OFFSET + IRQ_SPURIOUS)
+	{
 		cprintf("Spurious interrupt on irq 7\n");
 		print_trapframe(tf);
 		return;
@@ -275,14 +276,8 @@ void trap(struct Trapframe *tf)
 	// the interrupt path.
 	assert(!(read_eflags() & FL_IF));
 
-<<<<<<< HEAD
-	if ((tf->tf_cs & 3) == 3) {
-=======
-	cprintf("Incoming TRAP frame at %p\n", tf);
-
 	if ((tf->tf_cs & 3) == 3)
 	{
->>>>>>> origin/lab3
 		// Trapped from user mode.
 		// Acquire the big kernel lock before doing any
 		// serious kernel work.
@@ -290,7 +285,8 @@ void trap(struct Trapframe *tf)
 		assert(curenv);
 
 		// Garbage collect if current enviroment is a zombie
-		if (curenv->env_status == ENV_DYING) {
+		if (curenv->env_status == ENV_DYING)
+		{
 			env_free(curenv);
 			curenv = NULL;
 			sched_yield();
